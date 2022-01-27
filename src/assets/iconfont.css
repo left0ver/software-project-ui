@@ -1,0 +1,71 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 2986835 */
+  src: url('iconfont.woff2?t=1639398301546') format('woff2'),
+       url('iconfont.woff?t=1639398301546') format('woff'),
+       url('iconfont.ttf?t=1639398301546') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-keaide:before {
+  content: "\e600";
+}
+
+.icon-shu:before {
+  content: "\e62b";
+}
+
+.icon-dongtai:before {
+  content: "\e64f";
+}
+
+.icon-wenhao-yuankuang:before {
+  content: "\e8e9";
+}
+
+.icon-lishi:before {
+  content: "\e654";
+}
+
+.icon-tiku:before {
+  content: "\e6dc";
+}
+
+.icon-dianzan-copy:before {
+  content: "\e6c6";
+}
+
+.icon-dianzan:before {
+  content: "\e601";
+}
+
+.icon-querenmima:before {
+  content: "\e613";
+}
+
+.icon-male:before {
+  content: "\e615";
+}
+
+.icon-password:before {
+  content: "\e6a9";
+}
+
+.icon-email:before {
+  content: "\e663";
+}
+
+.icon-nv:before {
+  content: "\e6c4";
+}
+
+.icon-nan:before {
+  content: "\e625";
+}
+
