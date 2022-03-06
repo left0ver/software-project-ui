@@ -144,19 +144,17 @@ export default {
         this.activeArticle.like--;
       }
       //put请求将articleId和点赞数量,like (用来说明更新哪个字段)放请求体中，更新数据库对应文章的点赞数量
-      //   axios.put("");
       //更新文章的点赞的数量
-      axios.put("http://localhost:8000/article", {
+      axios.put("/article", {
         articleId,
         updateValue: this.activeArticle.like,
         updateFiled: "like",
       });
 
-      // 这里
       //put请求将articleId和用户id isFavorite 和isFavorite的值  放请求体中，更新数据库对应文章的是否点赞的信息
       //更新数据库用户点赞数量的信息
       //更新点赞数据库是否点赞的的信息
-      await axios.put("http://localhost:8000/article/like", {
+      await axios.put("/article/like", {
         articleId,
         uid: this.user.uid,
         updateValue: this.isFavorite,
@@ -165,35 +163,33 @@ export default {
     },
 
     collect(articleId) {
+      //put请求将articleId和收藏数量,collection (用来说明更新哪个字段)放请求体中，更新数据库对应文章的收藏数量
+      //put请求将articleId和用户id isCollection isCollection的值  放请求体中，更新数据库对应文章的是否收藏的信息
+      //更新数据库用户收藏数量的信息
       this.isCollection = !this.isCollection;
       if (this.isCollection) {
         this.activeArticle.collection++;
       } else {
         this.activeArticle.collection--;
       }
-      axios.put("http://localhost:8000/article", {
+      axios.put("/article", {
         articleId,
         updateValue: this.activeArticle.collection,
         updateFiled: "collection",
       });
-      axios.put("http://localhost:8000/article/like", {
+      axios.put("/article/like", {
         articleId,
         uid: this.user.uid,
         updateValue: this.isCollection,
         updateFiled: "isCollection",
       });
-      //put请求将articleId和收藏数量,collection (用来说明更新哪个字段)放请求体中，更新数据库对应文章的点赞数量
-      //   axios.put("");
-      //put请求将articleId和用户id isCollection isCollection的值  放请求体中，更新数据库对应文章的是否点赞的信息
-      //更新数据库用户收藏数量的信息
-      //更新like数据库是否收藏的的信息
     },
 
     async articleClicked(articleId) {
       //根据articleId和uid请求文章点赞和收藏的数据
       //这里请求过去，后端需要根据articleId和uid查询对应的数据并返回
       this.commentIsShow = false;
-      const activeLike = await axios.get("http://localhost:8000/article/like", {
+      const activeLike = await axios.get("/article/like", {
         params: { articleId, uid: this.user.uid },
       });
       if (!activeLike.data) {
@@ -206,7 +202,7 @@ export default {
           isCollection: false,
         };
         //添加数据
-        axios.post("http://localhost:8000/article/like", {
+        axios.post("/article/like", {
           ...this.activeLike,
         });
       } else {
@@ -223,7 +219,7 @@ export default {
       this.isFavorite = this.activeLike.isFavorite;
       this.isCollection = this.activeLike.isCollection;
       //根据articleId请求用户当前点的这篇文章的数据
-      const activeArticle = await axios.get("http://localhost:8000/article", {
+      const activeArticle = await axios.get("/article", {
         params: {
           articleId,
         },
@@ -232,23 +228,17 @@ export default {
       this.activeArticle = activeArticle.data;
 
       //根据文章编号请求对应文章所有的评论信息
-      const activeComment = await axios.get(
-        "http://localhost:8000/article/comment",
-        {
-          params: { articleId: this.activeArticle.articleId },
-        }
-      );
+      const activeComment = await axios.get("/article/comment", {
+        params: { articleId: this.activeArticle.articleId },
+      });
       //将请求过来的结果给this.activeComment  (一个数组）
       this.activeComment = activeComment.data;
 
       //遍历this.activeComment，根据评论的编号请求这条评论的回复信息
       for (let item of this.activeComment) {
-        const activeReply = await axios.get(
-          "http://localhost:8000/article/reply",
-          {
-            params: { commentId: item.commentId },
-          }
-        );
+        const activeReply = await axios.get("/article/reply", {
+          params: { commentId: item.commentId },
+        });
         //一条评论可能有多个回复，所以要把数组push 到this.activeReply
         //返回回来的可能是个空数组，这里需要判断一下
         if (activeReply.data.length) {
@@ -267,7 +257,7 @@ export default {
   async beforeRouteEnter(to, from, next) {
     if (to.path === "/article") {
       //请求所有文章的数据
-      const articles = await axios.get("http://localhost:8000/article");
+      const articles = await axios.get("/article");
       next(async (vm) => {
         vm.articles = articles.data;
         vm.user = JSON.parse(localStorage.getItem("user"));

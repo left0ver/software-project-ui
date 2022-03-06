@@ -25,6 +25,20 @@
           <i slot="prefix" class="icon iconfont icon-password"> </i>
         </el-input>
       </el-form-item>
+      <el-form-item prop="verifyCode">
+        <div class="verify-code">
+          <div>
+            <el-input
+              placeholder="验证码"
+              v-model="loginForm.verifyCode"
+              :validate-event="false"
+              @focus="clearErrorMessage('loginForm')"
+            ></el-input>
+          </div>
+
+          <div><img :src="codeSrc" @click="changeCode" alt="图片验证码" /></div>
+        </div>
+      </el-form-item>
       <el-form-item
         ><el-button
           type="success"
@@ -41,22 +55,48 @@
 <script>
 import axios from "axios";
 import { Message } from "element-ui";
+import { codeBaseUrl } from "../config/codeBaseUrl";
 export default {
   data() {
+    //用户名和密码自定义验证
     const confirmUser = (_, value, callback) => {
       if (value && this.loginForm.password) {
         axios
-          .post("http://localhost:8000/login", {
-            ...this.loginForm,
-          })
+          .post(
+            "/login",
+            {
+              username: this.loginForm.username,
+              password: this.loginForm.password,
+            },
+            { withCredentials: true }
+          )
           .then((res) => {
-            const { code } = res.data;
+            const { code, message } = res.data;
             localStorage.setItem("user", JSON.stringify(res.data));
-            if (code == 0) {
-              callback(new Error("用户名或密码错误"));
-            } else {
-              callback();
+            if (code === 0) {
+              return callback(new Error(message));
             }
+            return callback();
+          });
+      }
+    };
+    //验证码自定义验证
+    const checkVerifyCode = function (_, value, callback) {
+      if (value.length > 0) {
+        axios
+          .post(
+            "/login/code",
+            {
+              verifyCode: value,
+            },
+            { withCredentials: true }
+          )
+          .then((res) => {
+            const { code, message } = res.data;
+            if (code === 0) {
+              return callback(new Error(message));
+            }
+            return callback();
           });
       }
     };
@@ -65,6 +105,7 @@ export default {
       loginForm: {
         username: "",
         password: "",
+        verifyCode: "",
       },
       loginRules: {
         username: [
@@ -83,35 +124,59 @@ export default {
             message: "请输入密码",
           },
         ],
+
+        verifyCode: [
+          {
+            required: true,
+            message: "请输入验证码",
+          },
+          {
+            validator: checkVerifyCode,
+          },
+        ],
       },
+      codeSrc: `${codeBaseUrl}/code?t=${new Date().getTime()}`,
     };
   },
 
   methods: {
     login(fromName) {
       //验证用户名
-      this.$refs[fromName].validateField("username", (errMessage) => {
-        if (!errMessage) {
-          this.$router.replace("/home");
-          Message({
-            message: "登录成功",
-            type: "success",
-            duration: 1000,
-          });
-        } else {
+      this.$refs[fromName].validateField("verifyCode", (errMessage) => {
+        if (errMessage) {
           Message({
             message: "登录失败",
             type: "error",
             duration: 1000,
           });
+          return;
         }
+        //验证用户名和密码
+        this.$refs[fromName].validateField("username", (errMessage) => {
+          if (!errMessage) {
+            this.$router.replace("/home");
+            Message({
+              message: "登录成功",
+              type: "success",
+              duration: 1000,
+            });
+          } else {
+            Message({
+              message: "登录失败",
+              type: "error",
+              duration: 1000,
+            });
+          }
+        });
       });
-      //验证密码
-      this.$refs[fromName].validateField("password");
     },
     //清除验证的信息
     clearErrorMessage(formName) {
       this.$refs[formName].clearValidate();
+    },
+    changeCode() {
+      this.codeSrc = `${codeBaseUrl}/code?t=${new Date().getTime()}`;
+      this.loginForm.verifyCode = "";
     },
   },
 };
@@ -123,6 +188,9 @@ export default {
   margin: 10px auto;
   .input-login {
     width: 250px;
+  }
+  .verify-code {
+    display: flex;
   }
   .button-login {
     margin-top: 30px;

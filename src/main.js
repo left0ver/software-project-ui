@@ -3,6 +3,8 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import "./assets/iconfont.css";
+import axios from "axios";
+import baseUrl from "./config/baseUrl";
 import {
 	Button,
 	Tabs,
@@ -23,7 +25,7 @@ import {
 	Carousel,
 	CarouselItem,
 } from "element-ui";
-
+axios.defaults.baseURL = baseUrl;
 Vue.config.productionTip = false;
 Vue.use(Button);
 Vue.use(Tabs);

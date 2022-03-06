@@ -45,8 +45,8 @@ export default {
         });
         return;
       }
-      if (this.title.length) {
-        const res = await axios.post("http://localhost:8000/article", {
+      if (this.title.length > 0) {
+        const res = await axios.post("/article", {
           title: this.title,
           articleContent: this.articleContent,
           like: 0,
