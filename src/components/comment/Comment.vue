@@ -87,7 +87,7 @@ export default {
       //发送一个post请求，将评论存入数据库,然后res.send（）将刚刚存入的数据返回回来
       //如果有数据就发送
       if (this.commentContent.length) {
-        const res = await axios.post("http://localhost:8000/article/comment", {
+        const res = await axios.post("/article/comment", {
           commentUserId: this.user.uid,
           username: this.user.username,
           articleId: this.activeArticle.articleId,
@@ -124,15 +124,12 @@ export default {
           (value) => value[0].commentId == commentId
         );
 
-        const newReply = await axios.post(
-          "http://localhost:8000/article/reply",
-          {
-            commentId,
-            replyUserId: this.user.uid,
-            username: this.user.username,
-            replyContent: this.replyContent,
-          }
-        );
+        const newReply = await axios.post("/article/reply", {
+          commentId,
+          replyUserId: this.user.uid,
+          username: this.user.username,
+          replyContent: this.replyContent,
+        });
         //这个评论以前有回复
         if (this.activeReply[index]) {
           this.activeReply[index].push(newReply.data);

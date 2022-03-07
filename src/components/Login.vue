@@ -55,7 +55,7 @@
 <script>
 import axios from "axios";
 import { Message } from "element-ui";
-import { codeBaseUrl } from "../config/codeBaseUrl";
+import baseUrl from "../config/baseUrl";
 export default {
   data() {
     //用户名和密码自定义验证
@@ -72,7 +72,7 @@ export default {
           )
           .then((res) => {
             const { code, message } = res.data;
-            localStorage.setItem("user", JSON.stringify(res.data));
+            sessionStorage.setItem("user", JSON.stringify(res.data));
             if (code === 0) {
               return callback(new Error(message));
             }
@@ -135,7 +135,7 @@ export default {
           },
         ],
       },
-      codeSrc: `${codeBaseUrl}/code?t=${new Date().getTime()}`,
+      codeSrc: `${baseUrl}/code?t=${new Date().getTime()}`,
     };
   },
 
@@ -175,7 +175,7 @@ export default {
       this.$refs[formName].clearValidate();
     },
     changeCode() {
-      this.codeSrc = `${codeBaseUrl}/code?t=${new Date().getTime()}`;
+      this.codeSrc = `${baseUrl}/code?t=${new Date().getTime()}`;
       this.loginForm.verifyCode = "";
     },
   },
