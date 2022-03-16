@@ -12,7 +12,8 @@
           <div class="title">{{ article.title }}</div>
         </template>
         <div class="article-content">{{ activeArticle.articleContent }}</div>
-        <div class="footer-father">
+
+        <div class="footer-main">
           <div class="footer">
             <div class="like footer-group">
               <span
@@ -38,9 +39,9 @@
               <span>{{ activeArticle.collection }}</span>
             </div>
           </div>
-        </div>
-        <!-- 添加一个点击事件，防止冒泡 -->
-        <div class="comment-father">
+
+          <!-- 添加一个点击事件，防止冒泡 -->
+
           <div class="comment" @click.stop="">
             <comment
               :activeComment="activeComment"
@@ -177,6 +178,7 @@ export default {
         updateValue: this.activeArticle.collection,
         updateFiled: "collection",
       });
+      //更新对应收藏的数量
       axios.put("/article/like", {
         articleId,
         uid: this.user.uid,
@@ -241,7 +243,7 @@ export default {
         });
         //一条评论可能有多个回复，所以要把数组push 到this.activeReply
         //返回回来的可能是个空数组，这里需要判断一下
-        if (activeReply.data.length) {
+        if (activeReply.data.length !== 0) {
           this.activeReply.push([...activeReply.data]);
         }
       }
@@ -260,7 +262,7 @@ export default {
       const articles = await axios.get("/article");
       next(async (vm) => {
         vm.articles = articles.data;
-        vm.user = JSON.parse(localStorage.getItem("user"));
+        vm.user = JSON.parse(sessionStorage.getItem("user"));
       });
     }
   },
@@ -294,14 +296,15 @@ export default {
       .collected {
         color: #fc5531;
       }
-      .footer-father {
-        padding-bottom: 40px;
-        position: relative;
-
+      .footer-main {
+        display: flex;
+        padding-right: 250px;
+        align-items: flex-end;
+        flex-direction: column;
         .footer {
-          position: absolute;
-          right: 100px;
           display: flex;
+          width: 150px;
+          padding-bottom: 40px;
           justify-content: space-between;
           .footer-group {
             padding-left: 10px;
@@ -310,15 +313,6 @@ export default {
               cursor: pointer;
             }
           }
-        }
-      }
-      .comment-father {
-        // position: relative;
-        .comment {
-          margin-top: 30px;
-          margin-bottom: 30px;
-          position: relative;
-          left: 800px;
         }
       }
     }

@@ -68,10 +68,12 @@ export default {
               username: this.loginForm.username,
               password: this.loginForm.password,
             },
+            //允许携带cookie
             { withCredentials: true }
           )
           .then((res) => {
             const { code, message } = res.data;
+            //将用户信息存储在sessionStorage
             sessionStorage.setItem("user", JSON.stringify(res.data));
             if (code === 0) {
               return callback(new Error(message));
@@ -87,6 +89,7 @@ export default {
           .post(
             "/login/code",
             {
+              //验证码
               verifyCode: value,
             },
             { withCredentials: true }
@@ -107,6 +110,9 @@ export default {
         password: "",
         verifyCode: "",
       },
+      //验证码的url，通过改变时间戳实现验证码刷新
+      codeSrc: `${baseUrl}/code?t=${new Date().getTime()}`,
+      //校验规则
       loginRules: {
         username: [
           {
@@ -135,13 +141,12 @@ export default {
           },
         ],
       },
-      codeSrc: `${baseUrl}/code?t=${new Date().getTime()}`,
     };
   },
 
   methods: {
     login(fromName) {
-      //验证用户名
+      //验证码验证码的正确性和是否过期
       this.$refs[fromName].validateField("verifyCode", (errMessage) => {
         if (errMessage) {
           Message({
@@ -154,6 +159,7 @@ export default {
         //验证用户名和密码
         this.$refs[fromName].validateField("username", (errMessage) => {
           if (!errMessage) {
+            //跳转到首页
             this.$router.replace("/home");
             Message({
               message: "登录成功",
@@ -170,10 +176,11 @@ export default {
         });
       });
     },
-    //清除验证的信息
+    //聚焦之后清除验证的信息
     clearErrorMessage(formName) {
       this.$refs[formName].clearValidate();
     },
+    //改变时间戳更改验证码
     changeCode() {
       this.codeSrc = `${baseUrl}/code?t=${new Date().getTime()}`;
       this.loginForm.verifyCode = "";

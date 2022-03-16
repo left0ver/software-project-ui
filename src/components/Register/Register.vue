@@ -74,6 +74,7 @@ import { Message } from "element-ui";
 export default {
   name: "register",
   data() {
+    //检查密码是否一致
     const checkPassword = (_, value, callback) => {
       if (value && value === this.registerForm.password) {
         callback();
@@ -84,7 +85,7 @@ export default {
     //判断用户名是否存在
     const checkUsername = (_, value, callback) => {
       axios
-        .get(`http://localhost:8000/register?username=${value}`)
+        .get(`/register?username=${value}`)
         .then((res) => {
           if (res.data.code == 0) {
             callback(new Error("用户名已经存在"));
@@ -162,7 +163,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           axios
-            .post("http://localhost:8000/register", {
+            .post(`/register`, {
               username: this.registerForm.username,
               email: this.registerForm.email,
               password: this.registerForm.password,
@@ -170,12 +171,14 @@ export default {
             })
             .then((res) => {
               if (res.data.code == 1) {
+                //告诉父组件切换到Login组件
                 this.$emit("changePage", "login");
                 Message({
                   message: "注册成功",
                   type: "success",
                   duration: 1000,
                 });
+                //注册成功，清空表单数据
                 this.$refs[formName].resetFields();
               }
             })
@@ -185,7 +188,7 @@ export default {
         }
       });
     },
-
+    //清空表单
     reset(formName) {
       this.$refs[formName].resetFields();
     },

@@ -25,6 +25,7 @@ export default {
   },
 
   methods: {
+    //切换登录和注册的标签页
     toLogin(value) {
       this.activeName = value;
     },

@@ -46,6 +46,7 @@ export default {
       commentContent: "",
       replyContent: "",
       lastClick: null,
+      //一开始全部设为false，不展示
       isShowArray: new Array(this.activeComment.length).fill(false),
     };
   },
@@ -93,6 +94,7 @@ export default {
           articleId: this.activeArticle.articleId,
           commentContent: this.commentContent,
         });
+        //清空评论的内容
         this.commentContent = "";
         const comment = res.data;
         this.activeComment.push(comment);
@@ -101,6 +103,7 @@ export default {
 
     //回复的按钮
     reply(index) {
+      //如果是第一次点击
       if (this.lastClick == null) {
         this.lastClick = index;
       } else if (index !== this.lastClick) {
@@ -139,7 +142,7 @@ export default {
           arr.push(newReply.data);
           this.activeReply.push(arr);
         }
-        // 将服务器回来的数据push进去
+
         this.replyContent = "";
       }
     },
@@ -148,14 +151,13 @@ export default {
 </script>
 <style lang="less" scoped>
 .reply-input {
-  width: 400px;
+  width: 300px;
 }
 .comment {
   display: flex;
   position: relative;
-  right: 80px;
   .comment-input {
-    width: 400px;
+    width: 300px;
     border: 1px solid #ccc;
   }
   .reply {
